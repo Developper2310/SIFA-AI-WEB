@@ -117,9 +117,9 @@
                 // Hata ayıklama için konsola bilgi yazdırma
                 console.log('Kullanıcı mesajı:', userInput);
 
-               try {
+                try {
                     // API'ye istek gönderme
-                    const response = await fetch('http://<40.66.44.107>:5000/predict', {
+                    const response = await fetch('http://40.66.44.107:5000/predict', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -146,10 +146,9 @@
                     console.error('API isteği başarısız:', error);
                     const errorMessage = document.createElement('div');
                     errorMessage.className = 'bot-message';
-                    errorMessage.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+                    errorMessage.textContent = error;
                     chatbox.appendChild(errorMessage);
                 }
-      
 
                 // Input alanını temizleme
                 document.getElementById('user-input').value = '';
