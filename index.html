@@ -117,15 +117,15 @@
                 // Hata ayıklama için konsola bilgi yazdırma
                 console.log('Kullanıcı mesajı:', userInput);
 
-                try {
+               try {
                     // API'ye istek gönderme
-                    const response = await fetch('http://127.0.0.1:5000/predict', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ question: userInput })
-                    });
+                    const response = await fetch('http://<40.66.44.107>:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: userInput })
+                });
 
                     // Yanıtı kontrol etme
                     if (!response.ok) {
@@ -149,6 +149,7 @@
                     errorMessage.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
                     chatbox.appendChild(errorMessage);
                 }
+      
 
                 // Input alanını temizleme
                 document.getElementById('user-input').value = '';
