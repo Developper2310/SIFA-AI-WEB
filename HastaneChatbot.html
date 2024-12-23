@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mavi Hilal Hastanesi ŞİFA-AI Chatbot Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+
+        main {
+            padding: 2em;
+            text-align: center;
+            background-image: url('Health_Background_Nov21.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #chatbot-container {
+            border: 1px solid #ddd;
+            padding: 1em;
+            background-color: rgba(255, 255, 255, 0.3); /* %50 şeffaflık */
+            display: inline-block;
+            width: 80%;
+            max-width: 600px;
+            margin-top: 1em;
+            height: 400px;
+            overflow-y: scroll;
+        }
+
+        .chatbox {
+            margin-bottom: 1em;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message, .bot-message {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #e0e0e0;
+        }
+
+        #user-input {
+            width: 70%;
+            padding: 0.5em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1em;
+        }
+
+        button {
+            padding: 0.5em 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mavi Hilal Hastanesine Hoşgeldiniz</h1>
+        <p>Önce sizi sonra sağlığınızı önemsiyoruz</p>
+    </header>
+    <main>
+        <section id="chatbot-section">
+            <h2>ŞİFA-AI sorularınızı yanıtlamak için burada</h2>
+            <div id="chatbot-container">
+                <div class="chatbox" id="chatbox"></div>
+            </div>
+            <input type="text" id="user-input" placeholder="Sorunuzu buraya yazın...">
+            <button onclick="sendMessage()">Gönder</button>
+        </section>
+    </main>
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== '') {
+                const chatbox = document.getElementById('chatbox');
+
+                // Kullanıcı mesajını oluşturma
+                const userMessage = document.createElement('div');
+                userMessage.className = 'user-message';
+                userMessage.textContent = userInput;
+                chatbox.appendChild(userMessage);
+
+                // Hata ayıklama için konsola bilgi yazdırma
+                console.log('Kullanıcı mesajı:', userInput);
+
+                try {
+                    // API'ye istek gönderme
+                    const response = await fetch('http://127.0.0.1:5000/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ question: userInput })
+                    });
+
+                    // Yanıtı kontrol etme
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    // Bot mesajını oluşturma
+                    const botResponse = document.createElement('div');
+                    botResponse.className = 'bot-message';
+                    botResponse.textContent = result.answer;
+                    chatbox.appendChild(botResponse);
+
+                    // Hata ayıklama için yanıtı konsola yazdırma
+                    console.log('Bot yanıtı:', result.answer);
+                } catch (error) {
+                    console.error('API isteği başarısız:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'bot-message';
+                    errorMessage.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+                    chatbox.appendChild(errorMessage);
+                }
+
+                // Input alanını temizleme
+                document.getElementById('user-input').value = '';
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
